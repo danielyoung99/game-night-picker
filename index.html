@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What shall we play?</title>
+<meta name="description" content="Pick a game for family night or kids' club. Tell it who's coming and how much space you have, and it shows what fits.">
+<style>
+  :root{
+    --bg:#fbf6ec; --card:#fffdf8; --ink:#23262b; --muted:#5f666d; --line:#e8dfcc;
+    --accent:#b93d24; --accent-ink:#fff; --accent-soft:#f8e2db;
+    --calm:#1f6f6a; --calm-soft:#dcefec;
+    --lively:#8a5a00; --lively-soft:#f8ebc9;
+    --wild:#b93d24; --wild-soft:#f8e2db;
+    --focus:#1b5fd1;
+    --radius:16px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#17191c; --card:#202327; --ink:#f1ede4; --muted:#a6adb4; --line:#34393f;
+      --accent:#ef7a5f; --accent-ink:#1a0d09; --accent-soft:#3a2420;
+      --calm:#6fcfc6; --calm-soft:#1d3835;
+      --lively:#f0c15a; --lively-soft:#3a3016;
+      --wild:#ef7a5f; --wild-soft:#3a2420;
+      --focus:#7fb0ff;
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;line-height:1.5;font-size:17px}
+  button,select{font:inherit;color:inherit}
+  :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+
+  header.top{padding:28px 0 8px}
+  .brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  h1{font-family:"New York",Georgia,"Times New Roman",serif;font-size:clamp(32px,6vw,52px);line-height:1.05;margin:0 0 8px;letter-spacing:-.5px}
+  .lede{color:var(--muted);margin:0 0 18px;max-width:46ch}
+  .jump{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:15px;font-weight:600}
+  .jump b{color:var(--accent)}
+
+  .modes{display:inline-flex;background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:4px;gap:4px}
+  .modes button{border:0;background:none;padding:10px 18px;border-radius:999px;cursor:pointer;font-weight:600;min-height:44px}
+  .modes button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+  .layout{display:grid;gap:20px;padding:16px 0 40px}
+  @media (min-width:900px){
+    .layout{grid-template-columns:320px 1fr;align-items:start}
+    .filters{position:sticky;top:16px}
+  }
+
+  .filters{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:18px}
+  .filters h2{font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+  fieldset{border:0;margin:0 0 18px;padding:0}
+  legend{font-weight:700;padding:0;margin-bottom:8px}
+  .hint{font-weight:400;color:var(--muted);font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:8px 14px;cursor:pointer;min-height:44px;font-size:16px}
+  .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .stepper{display:flex;align-items:center;gap:12px}
+  .stepper button{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);font-size:22px;cursor:pointer;line-height:1}
+  .stepper output{min-width:2.5ch;text-align:center;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+  select{width:100%;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);min-height:44px}
+  .check{display:flex;gap:10px;align-items:center;min-height:44px;cursor:pointer}
+  .check input{width:22px;height:22px;accent-color:var(--accent)}
+  .linkbtn{background:none;border:0;color:var(--accent);font-weight:600;cursor:pointer;padding:8px 0;text-decoration:underline;min-height:44px}
+
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .count{font-size:20px;font-weight:700;margin:0}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{border:1.5px solid var(--ink);background:none;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;min-height:44px}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+
+  .cards{display:grid;gap:12px;list-style:none;margin:0;padding:0}
+  @media (min-width:640px){ .cards{grid-template-columns:1fr 1fr} }
+  .card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:10px}
+  .card h3{font-family:"New York",Georgia,serif;font-size:22px;line-height:1.15;margin:0}
+  .blurb{margin:0;color:var(--muted);font-size:16px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+  .tag{font-size:13.5px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+  .tag.calm{background:var(--calm-soft);color:var(--calm);border-color:transparent}
+  .tag.lively{background:var(--lively-soft);color:var(--lively);border-color:transparent}
+  .tag.wild{background:var(--wild-soft);color:var(--wild);border-color:transparent}
+  details summary{cursor:pointer;font-weight:700;min-height:32px;display:flex;align-items:center}
+  details .body{padding:6px 0 2px}
+  details .body h4{margin:12px 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  details .body p{margin:0}
+  .twist{background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin-top:12px}
+  .twist h4{margin-top:0 !important}
+  .card .add{margin-top:auto;align-self:flex-start}
+  .card .add[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+  .empty{background:var(--card);border:1.5px dashed var(--line);border-radius:var(--radius);padding:28px;text-align:center}
+  .empty p{margin:0 0 8px}
+
+  #mine{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:48px}
+  #mine h2{font-family:"New York",Georgia,serif;font-size:28px;margin:0 0 4px}
+  #mine ol{padding-left:0;list-style:none;counter-reset:n;margin:16px 0}
+  #mine li{counter-increment:n;display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+  #mine li::before{content:counter(n);flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700}
+  #mine li .t{flex:1}
+  #mine li .t small{display:block;color:var(--muted)}
+  #mine li button{border:0;background:none;color:var(--muted);cursor:pointer;min-width:44px;min-height:44px;font-size:15px;text-decoration:underline}
+  .total{color:var(--muted);margin:0}
+
+  dialog{border:0;border-radius:20px;padding:0;max-width:min(520px,calc(100vw - 24px));width:100%;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  dialog::backdrop{background:rgba(0,0,0,.5)}
+  .pick{padding:24px}
+  .pick .kicker{font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+  .pick h3{font-family:"New York",Georgia,serif;font-size:34px;line-height:1.1;margin:0 0 10px}
+  .pick .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+
+  footer{color:var(--muted);font-size:14px;padding:0 0 40px}
+
+  .print-title{display:none}
+  @media print{
+    body{background:#fff;color:#000;font-size:14pt}
+    header.top,.layout,footer,dialog,#mine .actions,#mine li button,.jump{display:none !important}
+    #mine{border:0;padding:0;margin:0}
+    .print-title{display:block;margin:0 0 8px}
+    #mine li::before{background:#000;color:#fff}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .card{transition:transform .15s}
+    .card:hover{transform:translateY(-2px)}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>What shall we play?</h1>
+      <button class="jump" id="jump" type="button">My evening <b id="jumpCount">0</b></button>
+    </div>
+    <p class="lede">Tell it who's coming and how much room you have. It shows the games that fit.</p>
+    <div class="modes" role="group" aria-label="What kind of evening">
+      <button type="button" data-mode="family" aria-pressed="true">Family night</button>
+      <button type="button" data-mode="club" aria-pressed="false">Kids' club</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="layout">
+    <section class="filters" aria-label="Filters">
+      <h2>What fits tonight</h2>
+
+      <fieldset>
+        <legend>How many playing?</legend>
+        <div class="stepper">
+          <button type="button" id="pMinus" aria-label="One fewer player">&minus;</button>
+          <output id="pNum" aria-live="polite">5</output>
+          <button type="button" id="pPlus" aria-label="One more player">+</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Ages <span class="hint">(pick all that are there)</span></legend>
+        <div class="chips" id="ageChips"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Where?</legend>
+        <div class="chips" id="spaceChips"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>How lively?</legend>
+        <div class="chips" id="energyChips"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend><label for="mins">How long?</label></legend>
+        <select id="mins">
+          <option value="0">Any length</option>
+          <option value="5">Up to 5 minutes</option>
+          <option value="10">Up to 10 minutes</option>
+          <option value="15">Up to 15 minutes</option>
+          <option value="20">Up to 20 minutes</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>What you need</legend>
+        <div class="chips" id="kitChips"></div>
+      </fieldset>
+
+      <label class="check"><input type="checkbox" id="bible"> Show Bible twists</label>
+      <button class="linkbtn" type="button" id="clear">Clear filters</button>
+    </section>
+
+    <section aria-label="Games">
+      <div class="bar">
+        <p class="count" id="count" aria-live="polite"></p>
+        <div class="actions">
+          <button class="btn primary" type="button" id="surprise">Pick one for me</button>
+          <button class="btn" type="button" id="plan">Plan an evening</button>
+        </div>
+      </div>
+      <ul class="cards" id="cards"></ul>
+    </section>
+  </div>
+
+  <section id="mine" aria-labelledby="mineH">
+    <h2 id="mineH">My evening</h2>
+    <h2 class="print-title">Games for tonight</h2>
+    <p class="total" id="total">Nothing added yet. Press "Add to my evening" on a game, or "Plan an evening" for a suggested running order.</p>
+    <ol id="mineList"></ol>
+    <div class="actions">
+      <button class="btn" type="button" id="print" disabled>Print</button>
+      <button class="btn" type="button" id="clearList" disabled>Clear list</button>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>Games are the classic ones, written up short. Check the space for hazards and keep the rules kind: nobody should be left out for long.</p>
+</footer>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="pick" id="pickBody"></div>
+</dialog>
+
+<script>
+/* ---------- Games ---------- */
+/* ages [min,max], players [min,max], mins, energy calm|lively|wild,
+   spaces: living | hall | outside, kit: null or text, role: warm | main | settle */
+const GAMES = [
+ {name:"Sardines", ages:[6,99], players:[5,30], mins:15, energy:"lively", spaces:["living","hall"], kit:null, role:"main",
+  blurb:"Hide and seek in reverse. One person hides and everyone else squeezes in beside them.",
+  how:"One person hides. Everyone else counts to a hundred, then goes looking. When you find the hider, you quietly climb in with them. The last person still searching hides next.",
+  tip:"Agree which rooms are off limits before you start.",
+  twist:"The hider is the lost sheep (Luke 15). End with a cheer for the one who was found."},
+ {name:"Hide and seek", ages:[3,99], players:[3,30], mins:10, energy:"lively", spaces:["living","hall","outside"], kit:null, role:"warm",
+  blurb:"The one everybody already knows.",
+  how:"One seeker counts with their eyes shut while everyone hides. The first person found is the next seeker.",
+  tip:"For under-fives, count to ten only and give 'warmer, colder' hints.",
+  twist:"Zacchaeus hid up a tree and Jesus found him (Luke 19). Talk about being looked for."},
+ {name:"Simon says", ages:[3,99], players:[3,40], mins:5, energy:"lively", spaces:["living","hall","outside"], kit:null, role:"warm",
+  blurb:"Do what the leader says, but only if they say 'Simon says' first.",
+  how:"The leader calls out actions. Only do them if the order starts with 'Simon says'. If you slip up, do a silly dance and rejoin.",
+  tip:"With under-sevens, never knock anyone out for good. The silly dance keeps everyone in.",
+  twist:"Play it as 'David says' and act out the story: swing a sling, tiptoe, roar like a lion."},
+ {name:"Musical statues", ages:[3,99], players:[4,40], mins:8, energy:"lively", spaces:["living","hall"], kit:"Music on a phone and speaker", role:"warm",
+  blurb:"Dance while the music plays. Freeze when it stops.",
+  how:"Play music and everyone dances. Stop it and everyone freezes. Anyone who moves picks the next song.",
+  tip:"Let the 'judge' choose the funniest statue instead of catching people out.",
+  twist:null},
+ {name:"Duck, duck, goose", ages:[3,8], players:[6,30], mins:8, energy:"lively", spaces:["hall","outside"], kit:null, role:"warm",
+  blurb:"A circle, a chase and an empty seat.",
+  how:"Everyone sits in a circle. The tapper walks round touching heads saying 'duck', then picks one as 'goose'. The goose chases the tapper round the circle. The tapper tries to sit in the goose's empty place.",
+  tip:"Over twenty children? Run two circles.",
+  twist:null},
+ {name:"What's the time, Mr Wolf?", ages:[4,10], players:[5,30], mins:10, energy:"lively", spaces:["hall","outside"], kit:null, role:"main",
+  blurb:"Creep up on the wolf, then run when he turns.",
+  how:"Mr Wolf stands at one end with their back turned. The others ask 'What's the time, Mr Wolf?'. Wolf answers with an o'clock and the group takes that many steps. When Wolf shouts 'Dinner time!', they turn and chase everyone back to the start.",
+  tip:"Let Wolf call a silly time now and then for giggles.",
+  twist:"Afterwards talk about the good shepherd who looks after the sheep when wolves are about (John 10)."},
+ {name:"Stuck in the mud", ages:[5,99], players:[8,40], mins:10, energy:"wild", spaces:["hall","outside"], kit:null, role:"main",
+  blurb:"Tag where friends can free you.",
+  how:"Choose one or two catchers. If they tag you, freeze with your legs apart. You're free again when a friend crawls through your legs.",
+  tip:"Swap catchers every couple of minutes so nobody is stuck for long.",
+  twist:"Carry each other's burdens (Galatians 6:2). Who rescued whom?"},
+ {name:"Giants, wizards and elves", ages:[7,99], players:[10,40], mins:12, energy:"wild", spaces:["hall","outside"], kit:null, role:"main",
+  blurb:"Rock, paper, scissors with two teams and a chase.",
+  how:"Two teams. Each huddles and secretly picks giant, wizard or elf. Giants beat elves, elves beat wizards, wizards beat giants. Teams face each other, act out their choice on three, and the winners chase the others back to their base. Anyone caught joins the other team.",
+  tip:"Practise the three poses first: giants stomp, wizards wiggle fingers, elves tiptoe.",
+  twist:"Read about David and Goliath (1 Samuel 17) first. Giants don't always win."},
+ {name:"Sleeping lions", ages:[3,8], players:[4,30], mins:6, energy:"calm", spaces:["living","hall"], kit:null, role:"settle",
+  blurb:"The quietest game going. Lie still and don't giggle.",
+  how:"Everyone lies on the floor like a sleeping lion. The leader walks round looking for anyone who moves, twitches or laughs. Those caught sit up. Last lion still is the winner.",
+  tip:"Good just before a story or prayer. Dim the lights.",
+  twist:"Tell the story of Daniel in the lions' den (Daniel 6) while they lie still."},
+ {name:"Heads down, thumbs up", ages:[5,12], players:[8,35], mins:8, energy:"calm", spaces:["living","hall"], kit:null, role:"settle",
+  blurb:"Guess who tapped your thumb.",
+  how:"Pick four to six tappers to stand at the front. Everyone else puts their head down on their arms with one thumb up. Each tapper gently presses one thumb, then goes back to the front. Heads up. If your thumb was pressed, guess who did it. Guess right and you swap places.",
+  tip:"Remind the tappers to press gently and stay quiet.",
+  twist:null},
+ {name:"Pass the parcel", ages:[3,10], players:[5,30], mins:10, energy:"calm", spaces:["living","hall"], kit:"A small prize wrapped in many layers of paper, music", role:"main",
+  blurb:"Unwrap a layer each time the music stops.",
+  how:"Wrap a small prize in lots of layers. Pass it round while the music plays. When the music stops, whoever holds it unwraps one layer.",
+  tip:"Put a sweet or sticker in every layer so nobody goes without.",
+  twist:"Hide a Bible verse or a question in each layer. The unwrapper reads it out."},
+ {name:"Kim's game", ages:[5,99], players:[2,30], mins:8, energy:"calm", spaces:["living","hall"], kit:"A tray of 12 to 20 small objects, a cloth, paper and pencils", role:"settle",
+  blurb:"Look at a tray for a minute. Then remember what was on it.",
+  how:"Show everyone the tray for one minute. Cover it. Everyone writes down or whispers as many items as they can remember.",
+  tip:"For little ones, take one thing away and ask 'what's missing?'.",
+  twist:"Fill the tray with things from Bible stories: a coin, a stone, a lamp, a loaf, a toy sheep, a key."},
+ {name:"I spy", ages:[3,8], players:[2,12], mins:5, energy:"calm", spaces:["living","hall","outside"], kit:null, role:"settle",
+  blurb:"Good for car journeys and waiting rooms too.",
+  how:"One person says 'I spy with my little eye something beginning with...' and the first letter. Everyone else guesses.",
+  tip:"For the youngest, use colours instead of letters.",
+  twist:null},
+ {name:"Charades", ages:[6,99], players:[4,30], mins:15, energy:"calm", spaces:["living","hall"], kit:"Paper and pen for topics (optional)", role:"main",
+  blurb:"Act it out without a word.",
+  how:"Split into teams. One person acts out a film, animal or story with no talking while their team guesses.",
+  tip:"For younger children, use animals and actions on picture cards.",
+  twist:"Act out Bible stories: Noah, Jonah, the feeding of the five thousand."},
+ {name:"Draw it", ages:[6,99], players:[4,24], mins:15, energy:"calm", spaces:["living","hall"], kit:"Paper, pens, a one-minute timer", role:"main",
+  blurb:"Draw a word while your team guesses.",
+  how:"One person from each team secretly gets a word and draws it. No letters, numbers or talking. Their team shouts guesses.",
+  tip:"Teams of three or four work best. One minute a go.",
+  twist:"Draw Bible things: the ark, a burning bush, a mustard seed, the good Samaritan."},
+ {name:"Pass the message", ages:[5,99], players:[6,30], mins:5, energy:"calm", spaces:["living","hall"], kit:null, role:"warm",
+  blurb:"Whisper it down the line and hear what comes out.",
+  how:"Sit in a line or circle. Whisper a message to the person next to you. They pass it on. The last person says it out loud.",
+  tip:"One go at the whisper. No repeats.",
+  twist:"Use a verse like John 3:16 and compare the end with the real thing. Talk about passing on good news."},
+ {name:"Human knot", ages:[8,99], players:[6,14], mins:10, energy:"lively", spaces:["hall","outside"], kit:null, role:"main",
+  blurb:"Tie yourselves in a knot, then undo it without letting go.",
+  how:"Stand in a tight circle. Reach in and take two different hands, not from the person next to you. Now untangle yourselves without letting go.",
+  tip:"Groups of six to ten work best. Split bigger groups.",
+  twist:"One body, many parts (1 Corinthians 12). It takes everyone to get free."},
+ {name:"Spaghetti tower", ages:[7,99], players:[4,30], mins:20, energy:"calm", spaces:["living","hall"], kit:"Dried spaghetti, marshmallows, sticky tape or string", role:"main",
+  blurb:"Build the tallest tower you can, with a marshmallow on top.",
+  how:"Teams of three to five get fifteen minutes to build a free-standing tower from spaghetti, tape and string. The marshmallow goes on top. Tallest tower that stands wins.",
+  tip:"Give each team 20 sticks, a metre of tape and one marshmallow.",
+  twist:"The wise and foolish builders (Matthew 7:24-27). Test one tower on a tray of flour or sand."},
+ {name:"Newspaper islands", ages:[4,99], players:[4,30], mins:10, energy:"lively", spaces:["living","hall"], kit:"Sheets of newspaper or towels, music", role:"main",
+  blurb:"Dance round the islands, then squeeze onto them.",
+  how:"Spread the sheets out as islands. Play music while everyone dances round. When it stops, stand on an island. Each round, take a sheet away. Everyone has to fit on what is left.",
+  tip:"Nobody is out. The challenge is getting everybody on.",
+  twist:"Noah's ark: everyone squeezes on as the water rises (Genesis 7)."},
+ {name:"Fruit salad", ages:[4,99], players:[8,40], mins:10, energy:"wild", spaces:["hall"], kit:"A chair each, minus one", role:"main",
+  blurb:"Swap seats when your fruit is called.",
+  how:"Sit in a circle of chairs. One player stands in the middle. Give everyone a fruit name (apple, banana, orange). The middle player calls a fruit and everyone with that name swaps seats while the middle player grabs one. Call 'fruit salad' and everybody swaps.",
+  tip:"Walk, don't run. Pull the chairs away from the walls.",
+  twist:"Use the fruit of the Spirit (Galatians 5:22): love, joy, peace, patience, kindness, goodness, faithfulness, gentleness, self-control."},
+ {name:"Musical chairs, nobody out", ages:[4,99], players:[6,30], mins:10, energy:"wild", spaces:["living","hall"], kit:"Chairs and music", role:"main",
+  blurb:"The kinder version. Everyone has to fit on the chairs left.",
+  how:"Set out chairs in a ring, one fewer than players. Walk round while the music plays. When it stops, find a seat. Take a chair away each round, but nobody leaves. Sit on knees until it is a pile.",
+  tip:"The last round is chaos in a good way.",
+  twist:"Talk about making room for each other."},
+ {name:"Balloon keep-up", ages:[3,99], players:[2,30], mins:5, energy:"lively", spaces:["living","hall"], kit:"Balloons", role:"warm",
+  blurb:"Keep it off the floor, together.",
+  how:"Keep the balloon in the air without holding it. Count how many hits you manage as a team. Add a second balloon when you're ready.",
+  tip:"Works with every age at once.",
+  twist:null},
+ {name:"Egg and spoon race", ages:[4,99], players:[4,40], mins:10, energy:"lively", spaces:["hall","outside"], kit:"Spoons and eggs, potatoes or ping pong balls", role:"main",
+  blurb:"Walk fast, don't drop it.",
+  how:"Each player balances an egg on a spoon and walks to the line and back. If it drops, pick it up and carry on.",
+  tip:"Use ping pong balls or potatoes for little ones.",
+  twist:null},
+ {name:"Three-legged race", ages:[5,99], players:[6,40], mins:10, energy:"lively", spaces:["hall","outside"], kit:"Scarves or old tights", role:"main",
+  blurb:"Tie two legs together and run in step.",
+  how:"Pair up. Tie your inside legs together with a scarf. Race to the line and back.",
+  tip:"Pair similar heights, and let an adult partner each little one.",
+  twist:"Two are better than one (Ecclesiastes 4:9-10)."},
+ {name:"Target toss", ages:[3,99], players:[2,30], mins:10, energy:"calm", spaces:["living","hall","outside"], kit:"Bean bags or rolled-up socks, buckets or hoops", role:"main",
+  blurb:"Throw it in. Near ones score 1, far ones score 5.",
+  how:"Set buckets or hoops at different distances. Each player gets three throws. Add up the score.",
+  tip:"Let younger children stand closer.",
+  twist:null},
+ {name:"Scavenger hunt", ages:[4,99], players:[4,40], mins:20, energy:"lively", spaces:["living","outside"], kit:"A list of things to find, pencils, bags", role:"main",
+  blurb:"Teams race to find everything on the list.",
+  how:"Give each team a list. First back with everything wins.",
+  tip:"Use picture lists for under-sevens and pair them with an older helper.",
+  twist:"Build the list from a story, such as the days of creation (Genesis 1) or the lost coin (Luke 15)."},
+ {name:"Two truths and a lie", ages:[9,99], players:[4,20], mins:10, energy:"calm", spaces:["living","hall"], kit:null, role:"warm",
+  blurb:"Tell three things about yourself. One is made up.",
+  how:"Everyone shares three things about themselves. Two are true and one isn't. The group guesses which is the lie.",
+  tip:"Good for new groups. Go first to show how it works.",
+  twist:null},
+ {name:"Hot and cold", ages:[3,99], players:[3,20], mins:8, energy:"calm", spaces:["living","hall"], kit:"A small object", role:"warm",
+  blurb:"Find the hidden thing. The group says warmer or colder.",
+  how:"One person leaves the room while the others hide a small object. When they come back, they search while everyone calls 'warmer' or 'colder'.",
+  tip:"Whisper the clues for a quieter version.",
+  twist:"Hide a coin like the woman who lost hers (Luke 15:8-10)."},
+ {name:"Beetle drive", ages:[5,99], players:[3,30], mins:20, energy:"calm", spaces:["living","hall"], kit:"A dice, paper and pencil for each table", role:"main",
+  blurb:"Roll a dice to draw a beetle, one body part at a time.",
+  how:"Players at a table take turns rolling. You need a 6 to draw the body first. Then 5 is the head, 4 a leg (six in all), 3 an eye (two), 2 a feeler (two) and 1 the tail. First to finish shouts 'Beetle!'.",
+  tip:"Swap tables after each round so everyone meets.",
+  twist:null},
+ {name:"Back-to-back drawing", ages:[8,99], players:[2,24], mins:10, energy:"calm", spaces:["living","hall"], kit:"Paper, pens, a simple picture for each pair", role:"settle",
+  blurb:"Describe a picture. Your partner draws it without seeing it.",
+  how:"Sit back to back in pairs. One has a simple picture and describes it without naming it. The other draws. Compare at the end.",
+  tip:"Start with shapes and move on to a house or a face.",
+  twist:"Listening and following a voice (John 10:27)."},
+ {name:"Name that tune", ages:[8,99], players:[4,30], mins:15, energy:"calm", spaces:["living","hall"], kit:"A phone and speaker", role:"main",
+  blurb:"Guess the song from the first few seconds.",
+  how:"Play the first few seconds of well-known songs. Teams shout out the title. A point for the title, a bonus for the singer.",
+  tip:"Mix kids' songs, film themes and pop.",
+  twist:"Use well-known hymns and worship songs."},
+ {name:"Sock wars", ages:[6,99], players:[6,30], mins:8, energy:"wild", spaces:["living","hall"], kit:"Lots of rolled-up socks", role:"main",
+  blurb:"Lob socks over the line. Clear your side.",
+  how:"Two teams either side of a line of tape. Throw rolled-up socks at the other side. Whatever lands on your side, throw back. After two minutes, the team with fewer socks wins.",
+  tip:"Throw below the shoulders only.",
+  twist:null},
+ {name:"Capture the flag", ages:[8,99], players:[10,40], mins:20, energy:"wild", spaces:["outside","hall"], kit:"Two flags (tea towels) and cones", role:"main",
+  blurb:"Steal their flag without being tagged.",
+  how:"Two teams, each with a flag at the back of their half. Cross over, grab the other flag and carry it home without being tagged. Tagged players wait in jail until a teammate frees them.",
+  tip:"Mark the halves with cones and agree where jail is first.",
+  twist:null},
+ {name:"Water balloon toss", ages:[5,99], players:[4,30], mins:10, energy:"lively", spaces:["outside"], kit:"Water balloons, a bucket of water", role:"main",
+  blurb:"Toss, catch, step back. Last unburst balloon wins.",
+  how:"Stand in pairs facing each other and toss a water balloon. After each catch, both take a step back. The last pair with an unburst balloon wins.",
+  tip:"Wet sponges are a safer swap for little ones. Pick up every bit of balloon afterwards.",
+  twist:"Talk about living water (John 4:14)."},
+ {name:"Tug of war", ages:[6,99], players:[6,40], mins:5, energy:"wild", spaces:["outside"], kit:"A strong rope", role:"main",
+  blurb:"Two teams, one rope.",
+  how:"Mark a line on the ground. Two teams pull until one drags the other over it.",
+  tip:"Mix the sizes on each team and let go if you fall.",
+  twist:null},
+ {name:"Obstacle course", ages:[3,99], players:[3,30], mins:20, energy:"lively", spaces:["living","hall","outside"], kit:"Cushions, hoops, chairs, blankets, tape", role:"main",
+  blurb:"Build a course, then beat your own time.",
+  how:"Build a course to crawl under, jump over and balance along. Time each person, then let them try to beat their own best.",
+  tip:"Time yourselves, not each other, so everyone has a personal best.",
+  twist:"Walk the Bible: crawl through the Red Sea, climb Mount Sinai, march round Jericho."},
+ {name:"Animal noises", ages:[4,10], players:[6,40], mins:8, energy:"lively", spaces:["hall","outside"], kit:"Slips of paper with animal names", role:"warm",
+  blurb:"Find your partner by sound alone.",
+  how:"Give each person a secret animal on a slip of paper, two of each animal. Close your eyes. Without talking, find your partner by making your animal's noise.",
+  tip:"Keep arms out in front, in a cleared space.",
+  twist:"Noah's ark: two of each animal. Pair up, then march into the ark (Genesis 7)."},
+ {name:"One-word story", ages:[7,99], players:[3,20], mins:8, energy:"calm", spaces:["living","hall","outside"], kit:null, role:"settle",
+  blurb:"Tell a story one word each.",
+  how:"Sit in a circle. Tell a story one word at a time, each person adding the next word.",
+  tip:"Keep going until it ends or gets sillier than silly.",
+  twist:"Retell a parable this way: the lost sheep or the good Samaritan."},
+ {name:"Mummy wrap", ages:[5,99], players:[6,30], mins:8, energy:"lively", spaces:["living","hall"], kit:"Toilet rolls", role:"main",
+  blurb:"Wrap a teammate in loo roll.",
+  how:"Teams of three or four wrap one teammate like a mummy. Best wrapped mummy wins. Keep the face clear.",
+  tip:"Have a bin bag ready for the mess.",
+  twist:"Lazarus (John 11:44). Jesus says 'unbind him'. Unwrap the mummy with a cheer."},
+ {name:"Four corners", ages:[5,12], players:[8,35], mins:8, energy:"lively", spaces:["hall"], kit:null, role:"warm",
+  blurb:"Pick a corner and hope it isn't called.",
+  how:"Name the four corners. One person stands in the middle with eyes shut, counting to ten while everyone else moves to a corner. They call a corner. Anyone in it is out. Last one standing wins.",
+  tip:"Players who are out can help call corners.",
+  twist:"Name the corners after Bible places: Egypt, Jerusalem, Galilee, Bethlehem."},
+ {name:"Mirror, mirror", ages:[4,99], players:[2,30], mins:5, energy:"calm", spaces:["living","hall"], kit:null, role:"settle",
+  blurb:"Copy your partner like a mirror.",
+  how:"Face a partner. One leads slow movements and the other copies. Swap after a minute.",
+  tip:"Slow works best. Try copying faces.",
+  twist:null}
+];
+GAMES.forEach((g,i)=>g.id=i);
+
+/* ---------- Filter setup ---------- */
+const AGES = [
+  {id:"a1", label:"3 to 4",  lo:3,  hi:4},
+  {id:"a2", label:"5 to 7",  lo:5,  hi:7},
+  {id:"a3", label:"8 to 11", lo:8,  hi:11},
+  {id:"a4", label:"12 to 17",lo:12, hi:17},
+  {id:"a5", label:"Adults",  lo:18, hi:99}
+];
+const SPACES = [["any","Anywhere"],["living","Living room"],["hall","Hall"],["outside","Outside"]];
+const ENERGY = [["calm","Calm"],["lively","Lively"],["wild","Wild"]];
+const KIT    = [["any","Anything goes"],["none","Nothing needed"]];
+const LABEL  = {calm:"Calm",lively:"Lively",wild:"Wild"};
+
+const state = {mode:"family", players:5, ages:new Set(), space:"any", energy:new Set(), mins:0, kit:"any", bible:false};
+let list = [];
+try{ list = JSON.parse(localStorage.getItem("gnp-list")||"[]").filter(i=>GAMES[i]); }catch(e){ list = []; }
+function saveList(){ try{ localStorage.setItem("gnp-list", JSON.stringify(list)); }catch(e){} }
+
+const $ = s => document.querySelector(s);
+
+/* ---------- Chips ---------- */
+function chipGroup(el, items, multi, key){
+  el.innerHTML = items.map(([v,l]) => `<button type="button" class="chip" data-v="${v}" aria-pressed="false">${l}</button>`).join("");
+  el.addEventListener("click", e=>{
+    const b = e.target.closest(".chip"); if(!b) return;
+    const v = b.dataset.v;
+    if(multi){ state[key].has(v) ? state[key].delete(v) : state[key].add(v); }
+    else { state[key] = v; }
+    sync(); render();
+  });
+}
+function chipsSync(){
+  document.querySelectorAll("#ageChips .chip").forEach(b=>b.setAttribute("aria-pressed", state.ages.has(b.dataset.v)));
+  document.querySelectorAll("#energyChips .chip").forEach(b=>b.setAttribute("aria-pressed", state.energy.has(b.dataset.v)));
+  document.querySelectorAll("#spaceChips .chip").forEach(b=>b.setAttribute("aria-pressed", state.space===b.dataset.v));
+  document.querySelectorAll("#kitChips .chip").forEach(b=>b.setAttribute("aria-pressed", state.kit===b.dataset.v));
+}
+chipGroup($("#ageChips"), AGES.map(a=>[a.id,a.label]), true, "ages");
+chipGroup($("#energyChips"), ENERGY, true, "energy");
+chipGroup($("#spaceChips"), SPACES, false, "space");
+chipGroup($("#kitChips"), KIT, false, "kit");
+
+function sync(){
+  chipsSync();
+  $("#pNum").textContent = state.players;
+  $("#mins").value = state.mins;
+  $("#bible").checked = state.bible;
+  document.querySelectorAll(".modes button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.mode===state.mode));
+}
+
+/* ---------- Matching ---------- */
+function suits(g){
+  if(state.players < g.players[0] || state.players > g.players[1]) return false;
+  for(const id of state.ages){
+    const a = AGES.find(x=>x.id===id);
+    if(!(g.ages[0] <= a.hi && g.ages[1] >= a.lo)) return false;
+  }
+  if(state.space!=="any" && !g.spaces.includes(state.space)) return false;
+  if(state.energy.size && !state.energy.has(g.energy)) return false;
+  if(state.mins && g.mins > state.mins) return false;
+  if(state.kit==="none" && g.kit) return false;
+  return true;
+}
+const results = () => GAMES.filter(suits);
+
+/* ---------- Rendering ---------- */
+function agesText(g){ return g.ages[1]>=99 ? `Ages ${g.ages[0]}+` : `Ages ${g.ages[0]} to ${g.ages[1]}`; }
+function playersText(g){ return `${g.players[0]} to ${g.players[1]} players`; }
+
+function cardHTML(g){
+  const on = list.includes(g.id);
+  return `<li class="card">
+    <h3>${g.name}</h3>
+    <p class="blurb">${g.blurb}</p>
+    <ul class="tags">
+      <li class="tag ${g.energy}">${LABEL[g.energy]}</li>
+      <li class="tag">${g.mins} min</li>
+      <li class="tag">${agesText(g)}</li>
+      <li class="tag">${playersText(g)}</li>
+    </ul>
+    <details>
+      <summary>How to play</summary>
+      <div class="body">
+        <h4>You need</h4><p>${g.kit || "Nothing"}</p>
+        <h4>How it works</h4><p>${g.how}</p>
+        <h4>${state.mode==="club" ? "Leader tip" : "Tip"}</h4><p>${g.tip}</p>
+        ${state.bible && g.twist ? `<div class="twist"><h4>Bible twist</h4><p>${g.twist}</p></div>` : ""}
+      </div>
+    </details>
+    <button type="button" class="btn add" data-id="${g.id}" aria-pressed="${on}">${on ? "In my evening" : "Add to my evening"}</button>
+  </li>`;
+}
+
+function render(){
+  const r = results();
+  $("#count").textContent = r.length===1 ? "1 game fits" : `${r.length} games fit`;
+  $("#surprise").disabled = r.length===0;
+  $("#cards").innerHTML = r.length ? r.map(cardHTML).join("") :
+    `<li class="empty" style="grid-column:1/-1"><p><b>Nothing fits all of that.</b></p><p>Try fewer ages, a longer time, or a different space.</p><button class="btn" type="button" id="emptyClear">Clear filters</button></li>`;
+  const ec = $("#emptyClear"); if(ec) ec.onclick = clearFilters;
+  renderList();
+}
+
+function renderList(){
+  $("#jumpCount").textContent = list.length;
+  const ol = $("#mineList");
+  ol.innerHTML = list.map(id=>{
+    const g = GAMES[id];
+    return `<li><div class="t"><b>${g.name}</b><small>${g.mins} min · ${LABEL[g.energy]}${g.kit ? " · " + g.kit : ""}</small></div><button type="button" data-rm="${id}" aria-label="Remove ${g.name}">Remove</button></li>`;
+  }).join("");
+  const total = list.reduce((s,id)=>s+GAMES[id].mins,0);
+  $("#total").textContent = list.length
+    ? `${list.length} ${list.length===1?"game":"games"}, about ${total} minutes.`
+    : `Nothing added yet. Press "Add to my evening" on a game, or "Plan an evening" for a suggested running order.`;
+  $("#print").disabled = $("#clearList").disabled = list.length===0;
+}
+
+/* ---------- Actions ---------- */
+function toggle(id){
+  list = list.includes(id) ? list.filter(x=>x!==id) : [...list, id];
+  saveList(); render();
+}
+$("#cards").addEventListener("click", e=>{
+  const b = e.target.closest(".add"); if(b) toggle(+b.dataset.id);
+});
+$("#mineList").addEventListener("click", e=>{
+  const b = e.target.closest("[data-rm]"); if(b) toggle(+b.dataset.rm);
+});
+$("#clearList").onclick = ()=>{ list = []; saveList(); render(); };
+$("#print").onclick = ()=>window.print();
+$("#jump").onclick = ()=>$("#mine").scrollIntoView({behavior:"smooth"});
+
+$("#pMinus").onclick = ()=>{ state.players = Math.max(2, state.players-1); sync(); render(); };
+$("#pPlus").onclick  = ()=>{ state.players = Math.min(60, state.players+1); sync(); render(); };
+$("#mins").onchange  = e=>{ state.mins = +e.target.value; render(); };
+$("#bible").onchange = e=>{ state.bible = e.target.checked; render(); };
+
+function clearFilters(){
+  state.ages.clear(); state.energy.clear(); state.space="any"; state.kit="any"; state.mins=0;
+  state.players = state.mode==="club" ? 15 : 5;
+  sync(); render();
+}
+$("#clear").onclick = clearFilters;
+
+document.querySelectorAll(".modes button").forEach(b=>b.onclick = ()=>{
+  state.mode = b.dataset.mode;
+  state.players = state.mode==="club" ? 15 : 5;
+  state.bible = state.mode==="club";
+  sync(); render();
+});
+
+/* Evening plan: a warm-up, two main games, one to settle */
+const rnd = a => a[Math.floor(Math.random()*a.length)];
+$("#plan").onclick = ()=>{
+  if(list.length && !confirm("Replace your current list with a new suggestion?")) return;
+  const pool = results();
+  if(!pool.length){ $("#cards").scrollIntoView(); return; }
+  const used = new Set(), out = [];
+  const take = (arr) => { const c = arr.filter(g=>!used.has(g.id)); if(!c.length) return; const g = rnd(c); used.add(g.id); out.push(g.id); };
+  take(pool.filter(g=>g.role==="warm"));
+  const mains = pool.filter(g=>g.role==="main");
+  take(mains.filter(g=>g.energy==="lively"));
+  take(mains.filter(g=>g.energy!=="calm" && !used.has(g.id)).length ? mains.filter(g=>g.energy==="wild") : mains);
+  take(mains);
+  take(pool.filter(g=>g.role==="settle"));
+  while(out.length < 4 && out.length < pool.length) take(pool);
+  list = out; saveList(); render();
+  $("#mine").scrollIntoView({behavior:"smooth"});
+};
+
+/* Pick one for me */
+const dlg = $("#dlg");
+let lastPick = -1;
+function showPick(){
+  const r = results(); if(!r.length) return;
+  let g = rnd(r.length>1 ? r.filter(x=>x.id!==lastPick) : r);
+  lastPick = g.id;
+  const on = list.includes(g.id);
+  $("#pickBody").innerHTML = `
+    <p class="kicker">Tonight, try</p>
+    <h3 id="dlgTitle">${g.name}</h3>
+    <p class="blurb">${g.blurb}</p>
+    <ul class="tags" style="margin:12px 0">
+      <li class="tag ${g.energy}">${LABEL[g.energy]}</li><li class="tag">${g.mins} min</li><li class="tag">${agesText(g)}</li>
+    </ul>
+    <h4 style="margin:12px 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)">You need</h4><p style="margin:0">${g.kit || "Nothing"}</p>
+    <h4 style="margin:12px 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)">How it works</h4><p style="margin:0">${g.how}</p>
+    ${state.bible && g.twist ? `<div class="twist"><h4>Bible twist</h4><p>${g.twist}</p></div>` : ""}
+    <div class="row">
+      <button class="btn primary" type="button" id="again">Another one</button>
+      <button class="btn" type="button" id="addPick" aria-pressed="${on}">${on ? "In my evening" : "Add to my evening"}</button>
+      <button class="btn" type="button" id="closePick">Close</button>
+    </div>`;
+  $("#again").onclick = showPick;
+  $("#addPick").onclick = ()=>{ toggle(g.id); showPick_same(g); };
+  $("#closePick").onclick = ()=>dlg.close();
+}
+function showPick_same(g){
+  const on = list.includes(g.id);
+  $("#addPick").textContent = on ? "In my evening" : "Add to my evening";
+  $("#addPick").setAttribute("aria-pressed", on);
+}
+$("#surprise").onclick = ()=>{ showPick(); dlg.showModal(); };
+dlg.addEventListener("click", e=>{ if(e.target===dlg) dlg.close(); });
+
+sync(); render();
+</script>
+</body>
+</html>
