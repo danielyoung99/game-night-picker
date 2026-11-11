@@ -4,220 +4,331 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>What shall we play?</title>
-<meta name="description" content="Pick a game for family night or kids' club. Tell it who's coming and how much space you have, and it shows what fits.">
+<meta name="description" content="Games for family nights and children's clubs. Tell us who's coming and we'll show you what works.">
 <style>
   :root{
-    --bg:#fbf6ec; --card:#fffdf8; --ink:#23262b; --muted:#5f666d; --line:#e8dfcc;
+    --bg:#fbf6ec; --card:#fffdf8; --ink:#23262b; --muted:#5a6168; --line:#e8dfcc;
     --accent:#b93d24; --accent-ink:#fff; --accent-soft:#f8e2db;
-    --calm:#1f6f6a; --calm-soft:#dcefec;
-    --lively:#8a5a00; --lively-soft:#f8ebc9;
-    --wild:#b93d24; --wild-soft:#f8e2db;
+    --teal:#1f6f6a; --teal-soft:#dcefec;
+    --sun:#f2b632; --sun-soft:#f8ebc9; --sun-ink:#5c3d00;
+    --band:#17403d; --band-ink:#f6f1e6;
     --focus:#1b5fd1;
-    --radius:16px;
+    --serif:"New York",Georgia,"Times New Roman",serif;
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#17191c; --card:#202327; --ink:#f1ede4; --muted:#a6adb4; --line:#34393f;
+      --bg:#15171a; --card:#1f2226; --ink:#f1ede4; --muted:#a9b0b7; --line:#343a40;
       --accent:#ef7a5f; --accent-ink:#1a0d09; --accent-soft:#3a2420;
-      --calm:#6fcfc6; --calm-soft:#1d3835;
-      --lively:#f0c15a; --lively-soft:#3a3016;
-      --wild:#ef7a5f; --wild-soft:#3a2420;
+      --teal:#6fcfc6; --teal-soft:#1d3835;
+      --sun:#f0c15a; --sun-soft:#3a3016; --sun-ink:#f0c15a;
+      --band:#10302d; --band-ink:#f6f1e6;
       --focus:#7fb0ff;
     }
   }
   *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;line-height:1.5;font-size:17px}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:76px}
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;line-height:1.55;font-size:17px}
   button,select{font:inherit;color:inherit}
   :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
-  .wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+  h1,h2,h3{font-family:var(--serif);font-weight:700;letter-spacing:-.02em}
 
-  header.top{padding:28px 0 8px}
-  .brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  h1{font-family:"New York",Georgia,"Times New Roman",serif;font-size:clamp(32px,6vw,52px);line-height:1.05;margin:0 0 8px;letter-spacing:-.5px}
-  .lede{color:var(--muted);margin:0 0 18px;max-width:46ch}
-  .jump{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:15px;font-weight:600}
-  .jump b{color:var(--accent)}
+  /* nav */
+  .nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px}
+  .logo{font-family:var(--serif);font-weight:700;font-size:21px;text-decoration:none;color:var(--ink)}
+  .links{display:flex;align-items:center;gap:6px}
+  .links a{color:var(--ink);text-decoration:none;font-weight:600;padding:10px 12px;border-radius:999px;font-size:16px}
+  .links a:hover{background:var(--line)}
+  .links a.pill{background:var(--ink);color:var(--bg)}
+  .links a.pill b{margin-left:4px}
+  @media (max-width:640px){ .links a.hide-s{display:none} .logo{font-size:18px} }
+  .logo,.links a{white-space:nowrap}
 
-  .modes{display:inline-flex;background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:4px;gap:4px}
-  .modes button{border:0;background:none;padding:10px 18px;border-radius:999px;cursor:pointer;font-weight:600;min-height:44px}
-  .modes button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);background:none;border-radius:999px;padding:12px 22px;font-weight:700;cursor:pointer;min-height:48px;text-decoration:none;color:var(--ink);font-size:17px}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .btn.light{border-color:var(--band-ink);color:var(--band-ink)}
+  .btn.solid-light{background:var(--band-ink);border-color:var(--band-ink);color:var(--band)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
 
-  .layout{display:grid;gap:20px;padding:16px 0 40px}
-  @media (min-width:900px){
-    .layout{grid-template-columns:320px 1fr;align-items:start}
-    .filters{position:sticky;top:16px}
-  }
+  /* hero */
+  .hero{padding:56px 0 64px;overflow:hidden}
+  .hero-grid{display:grid;gap:40px;align-items:center}
+  @media (min-width:900px){ .hero-grid{grid-template-columns:1.15fr .85fr} }
+  .eyebrow{font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:13px;color:var(--accent);margin:0 0 14px}
+  .hero h1{font-size:clamp(44px,8vw,88px);line-height:.98;margin:0 0 20px}
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .hero .sub{font-size:clamp(18px,2.2vw,21px);color:var(--muted);max-width:34ch;margin:0 0 28px}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+  .modes{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .modes span{font-weight:600;color:var(--muted);font-size:15px}
+  .seg{display:inline-flex;background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:4px;gap:4px}
+  .seg button{border:0;background:none;padding:9px 16px;border-radius:999px;cursor:pointer;font-weight:600;min-height:44px}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 
-  .filters{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:18px}
-  .filters h2{font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
-  fieldset{border:0;margin:0 0 18px;padding:0}
-  legend{font-weight:700;padding:0;margin-bottom:8px}
+  .fan{position:relative;height:380px;max-width:420px;margin:0 auto;width:100%}
+  .fan .tile{position:absolute;width:56%;aspect-ratio:3/4;border-radius:22px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 18px 40px rgba(0,0,0,.18)}
+  .fan .tile b{font-family:var(--serif);font-size:30px;line-height:1.05}
+  .fan .tile small{font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+  .t1{left:0;top:40px;transform:rotate(-8deg);background:var(--teal);color:#fff;z-index:1}
+  .t2{left:17%;top:6px;transform:rotate(2deg);background:var(--sun);color:#3b2800;z-index:2}
+  .t3{right:0;top:50px;transform:rotate(10deg);background:var(--accent);color:var(--accent-ink);z-index:3}
+  @media (max-width:899px){ .fan{height:300px} .fan .tile b{font-size:24px} }
+
+  /* sections */
+  section.block{padding:64px 0}
+  .head{max-width:60ch;margin-bottom:28px}
+  .head h2{font-size:clamp(32px,5vw,52px);line-height:1.05;margin:0 0 10px}
+  .head p{margin:0;color:var(--muted);font-size:19px}
+
+  /* mood tiles */
+  .moods{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+  @media (min-width:1000px){ .moods{grid-template-columns:repeat(4,1fr)} }
+  @media (max-width:480px){ .moods{grid-template-columns:1fr} .mood{min-height:170px} }
+  .mood{border:0;text-align:left;cursor:pointer;border-radius:24px;padding:26px;min-height:220px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s}
+  .mood:hover{transform:translateY(-3px)}
+  .mood b{font-family:var(--serif);font-size:30px;line-height:1.05;display:block;margin-bottom:8px}
+  .mood span{font-size:16px;display:block}
+  .mood i{font-style:normal;font-weight:700;font-size:15px}
+  .m1{background:var(--teal);color:#fff}
+  .m2{background:var(--accent);color:var(--accent-ink)}
+  .m3{background:var(--sun);color:#3b2800}
+  .m4{background:var(--ink);color:var(--bg)}
+
+  /* finder */
+  .finder{background:var(--card);border:1.5px solid var(--line);border-radius:28px;padding:28px;display:grid;gap:22px 28px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-bottom:34px}
+  fieldset{border:0;margin:0;padding:0;min-width:0}
+  legend{font-weight:700;padding:0;margin-bottom:10px}
   .hint{font-weight:400;color:var(--muted);font-size:14px}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
   .chip{border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:8px 14px;cursor:pointer;min-height:44px;font-size:16px}
   .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-  .stepper{display:flex;align-items:center;gap:12px}
-  .stepper button{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);font-size:22px;cursor:pointer;line-height:1}
-  .stepper output{min-width:2.5ch;text-align:center;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
-  select{width:100%;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);min-height:44px}
+  .stepper{display:flex;align-items:center;gap:14px}
+  .stepper button{width:48px;height:48px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);font-size:24px;cursor:pointer;line-height:1}
+  .stepper output{min-width:2.5ch;text-align:center;font-family:var(--serif);font-size:38px;font-weight:700;font-variant-numeric:tabular-nums}
+  select{width:100%;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);min-height:48px}
   .check{display:flex;gap:10px;align-items:center;min-height:44px;cursor:pointer}
   .check input{width:22px;height:22px;accent-color:var(--accent)}
-  .linkbtn{background:none;border:0;color:var(--accent);font-weight:600;cursor:pointer;padding:8px 0;text-decoration:underline;min-height:44px}
+  .linkbtn{background:none;border:0;color:var(--accent);font-weight:700;cursor:pointer;padding:8px 0;text-decoration:underline;min-height:44px;font-size:16px}
+  .finder .foot{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 
-  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-  .count{font-size:20px;font-weight:700;margin:0}
-  .actions{display:flex;gap:8px;flex-wrap:wrap}
-  .btn{border:1.5px solid var(--ink);background:none;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;min-height:44px}
-  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .count{font-family:var(--serif);font-size:28px;font-weight:700;margin:0}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
 
-  .cards{display:grid;gap:12px;list-style:none;margin:0;padding:0}
-  @media (min-width:640px){ .cards{grid-template-columns:1fr 1fr} }
-  .card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:10px}
-  .card h3{font-family:"New York",Georgia,serif;font-size:22px;line-height:1.15;margin:0}
+  /* cards */
+  .cards{display:grid;gap:18px;list-style:none;margin:0;padding:0}
+  @media (min-width:660px){ .cards{grid-template-columns:1fr 1fr} }
+  @media (min-width:1020px){ .cards{grid-template-columns:repeat(3,1fr)} }
+  .card{background:var(--card);border:1.5px solid var(--line);border-radius:24px;overflow:hidden;display:flex;flex-direction:column}
+  .card .top{padding:18px 20px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+  .card.calm .top{background:var(--teal-soft);color:var(--teal)}
+  .card.lively .top{background:var(--sun-soft);color:var(--sun-ink)}
+  .card.wild .top{background:var(--accent-soft);color:var(--accent)}
+  .card .inner{padding:16px 20px 20px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .card h3{font-size:27px;line-height:1.1;margin:0}
   .blurb{margin:0;color:var(--muted);font-size:16px}
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
   .tag{font-size:13.5px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
-  .tag.calm{background:var(--calm-soft);color:var(--calm);border-color:transparent}
-  .tag.lively{background:var(--lively-soft);color:var(--lively);border-color:transparent}
-  .tag.wild{background:var(--wild-soft);color:var(--wild);border-color:transparent}
-  details summary{cursor:pointer;font-weight:700;min-height:32px;display:flex;align-items:center}
-  details .body{padding:6px 0 2px}
-  details .body h4{margin:12px 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  details summary{cursor:pointer;font-weight:700;min-height:36px;display:flex;align-items:center;color:var(--accent)}
+  details .body{padding:4px 0 2px}
+  details .body h4{margin:14px 0 2px;font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
   details .body p{margin:0}
-  .twist{background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin-top:12px}
+  .twist{background:var(--accent-soft);border-radius:14px;padding:12px 14px;margin-top:14px}
   .twist h4{margin-top:0 !important}
-  .card .add{margin-top:auto;align-self:flex-start}
+  .card .add{margin-top:auto;align-self:flex-start;padding:9px 18px;min-height:44px;font-size:16px}
   .card .add[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+  .empty{background:var(--card);border:2px dashed var(--line);border-radius:24px;padding:36px;text-align:center}
+  .empty p{margin:0 0 10px}
 
-  .empty{background:var(--card);border:1.5px dashed var(--line);border-radius:var(--radius);padding:28px;text-align:center}
-  .empty p{margin:0 0 8px}
-
-  #mine{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:48px}
-  #mine h2{font-family:"New York",Georgia,serif;font-size:28px;margin:0 0 4px}
-  #mine ol{padding-left:0;list-style:none;counter-reset:n;margin:16px 0}
-  #mine li{counter-increment:n;display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
-  #mine li::before{content:counter(n);flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700}
+  /* plan band */
+  .band{background:var(--band);color:var(--band-ink)}
+  .band .head p{color:color-mix(in srgb,var(--band-ink) 78%,transparent)}
+  .band .cta{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:34px}
+  #mine{background:var(--card);color:var(--ink);border-radius:28px;padding:28px}
+  #mine h3{font-size:30px;margin:0 0 4px}
+  #mine ol{padding:0;list-style:none;counter-reset:n;margin:16px 0}
+  #mine li{counter-increment:n;display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+  #mine li::before{content:counter(n);flex:none;width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-family:var(--serif);font-size:18px}
   #mine li .t{flex:1}
   #mine li .t small{display:block;color:var(--muted)}
   #mine li button{border:0;background:none;color:var(--muted);cursor:pointer;min-width:44px;min-height:44px;font-size:15px;text-decoration:underline}
   .total{color:var(--muted);margin:0}
+  #mine .actions .btn{padding:10px 20px;min-height:44px;font-size:16px}
 
-  dialog{border:0;border-radius:20px;padding:0;max-width:min(520px,calc(100vw - 24px));width:100%;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
-  dialog::backdrop{background:rgba(0,0,0,.5)}
-  .pick{padding:24px}
-  .pick .kicker{font-size:13px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
-  .pick h3{font-family:"New York",Georgia,serif;font-size:34px;line-height:1.1;margin:0 0 10px}
-  .pick .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  footer{padding:44px 0 56px;color:var(--muted);font-size:15px}
+  footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  footer p{margin:0;max-width:56ch}
 
-  footer{color:var(--muted);font-size:14px;padding:0 0 40px}
+  dialog{border:0;border-radius:28px;padding:0;max-width:min(560px,calc(100vw - 24px));width:100%;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  dialog::backdrop{background:rgba(0,0,0,.55)}
+  .pick{padding:28px}
+  .pick .kicker{font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:13px;color:var(--accent);margin:0 0 6px}
+  .pick h3{font-size:42px;line-height:1.05;margin:0 0 10px}
+  .pick h4{margin:14px 0 2px;font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .pick p{margin:0}
+  .pick .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .pick .btn{padding:10px 20px;min-height:46px;font-size:16px}
 
   .print-title{display:none}
   @media print{
     body{background:#fff;color:#000;font-size:14pt}
-    header.top,.layout,footer,dialog,#mine .actions,#mine li button,.jump{display:none !important}
-    #mine{border:0;padding:0;margin:0}
-    .print-title{display:block;margin:0 0 8px}
+    .nav,.hero,section.block:not(.band),footer,dialog{display:none !important}
+    .band{background:none;color:#000;padding:0}
+    .band .head,.band .cta,#mine .actions,#mine li button{display:none !important}
+    #mine{border:0;padding:0}
+    .print-title{display:block;font-family:var(--serif);font-size:30px;margin:0 0 8px}
+    #mine h3{display:none}
     #mine li::before{background:#000;color:#fff}
-  }
-  @media (prefers-reduced-motion:no-preference){
-    .card{transition:transform .15s}
-    .card:hover{transform:translateY(-2px)}
   }
 </style>
 </head>
 <body>
 
-<header class="top">
+<nav class="nav" aria-label="Main">
   <div class="wrap">
-    <div class="brand">
-      <h1>What shall we play?</h1>
-      <button class="jump" id="jump" type="button">My evening <b id="jumpCount">0</b></button>
+    <a class="logo" href="#top">What shall we play?</a>
+    <div class="links">
+      <a class="hide-s" href="#moods">Browse</a>
+      <a class="hide-s" href="#find">Find a game</a>
+      <a class="hide-s" href="#plan">Plan a night</a>
+      <a class="pill" href="#mine" id="jump">My evening <b id="jumpCount">0</b></a>
     </div>
-    <p class="lede">Tell it who's coming and how much room you have. It shows the games that fit.</p>
-    <div class="modes" role="group" aria-label="What kind of evening">
-      <button type="button" data-mode="family" aria-pressed="true">Family night</button>
-      <button type="button" data-mode="club" aria-pressed="false">Kids' club</button>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">For family nights and children's clubs</p>
+      <h1>Something <em>good</em> to play tonight.</h1>
+      <p class="sub"><span id="gameCount">46</span> games, each with the rules written out in a few lines. Tell us who's coming and we'll show you what works.</p>
+      <div class="cta">
+        <a class="btn primary" href="#find">Find a game</a>
+        <button class="btn" type="button" id="heroPick">Pick one for me</button>
+      </div>
+      <div class="modes">
+        <span>Planning a</span>
+        <div class="seg" role="group" aria-label="What kind of evening">
+          <button type="button" data-mode="family" aria-pressed="true">Family night</button>
+          <button type="button" data-mode="club" aria-pressed="false">Kids' club</button>
+        </div>
+      </div>
+    </div>
+    <div class="fan" aria-hidden="true">
+      <div class="tile t1"><small>Calm · 20 min</small><b>Mafia</b></div>
+      <div class="tile t2"><small>Lively · 15 min</small><b>Sardines</b></div>
+      <div class="tile t3"><small>Calm · 20 min</small><b>Scatter&shy;gories</b></div>
     </div>
   </div>
 </header>
 
-<main class="wrap">
-  <div class="layout">
-    <section class="filters" aria-label="Filters">
-      <h2>What fits tonight</h2>
+<main>
+  <section class="block" id="moods" style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <h2>What kind of night is it?</h2>
+        <p>Start with a mood and narrow it down after.</p>
+      </div>
+      <div class="moods">
+        <button class="mood m1" type="button" data-preset="table"><div><b>Around the table</b><span>Word games, drawing and guessing. Mafia, Empires, Ghost.</span></div><i>See these games &rarr;</i></button>
+        <button class="mood m2" type="button" data-preset="move"><div><b>Up and running</b><span>Chases, races and squeezing onto newspaper islands.</span></div><i>See these games &rarr;</i></button>
+        <button class="mood m3" type="button" data-preset="little"><div><b>For little ones</b><span>Easy to learn and fine for ages three and four.</span></div><i>See these games &rarr;</i></button>
+        <button class="mood m4" type="button" data-preset="big"><div><b>A big group</b><span>Twenty-five or more, with no one sitting out.</span></div><i>See these games &rarr;</i></button>
+      </div>
+    </div>
+  </section>
 
-      <fieldset>
-        <legend>How many playing?</legend>
-        <div class="stepper">
-          <button type="button" id="pMinus" aria-label="One fewer player">&minus;</button>
-          <output id="pNum" aria-live="polite">5</output>
-          <button type="button" id="pPlus" aria-label="One more player">+</button>
+  <section class="block" id="find" style="padding-top:8px">
+    <div class="wrap">
+      <div class="head">
+        <h2>Tell us about tonight</h2>
+        <p>We'll show only the games that suit everyone in the room.</p>
+      </div>
+
+      <div class="finder" role="group" aria-label="Filters">
+        <fieldset>
+          <legend>How many are playing?</legend>
+          <div class="stepper">
+            <button type="button" id="pMinus" aria-label="One fewer player">&minus;</button>
+            <output id="pNum" aria-live="polite">5</output>
+            <button type="button" id="pPlus" aria-label="One more player">+</button>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Ages <span class="hint">(pick everyone who's there)</span></legend>
+          <div class="chips" id="ageChips"></div>
+        </fieldset>
+        <fieldset>
+          <legend>Where?</legend>
+          <div class="chips" id="spaceChips"></div>
+        </fieldset>
+        <fieldset>
+          <legend>How lively?</legend>
+          <div class="chips" id="energyChips"></div>
+        </fieldset>
+        <fieldset>
+          <legend><label for="mins">How long?</label></legend>
+          <select id="mins">
+            <option value="0">Any length</option>
+            <option value="5">Up to 5 minutes</option>
+            <option value="10">Up to 10 minutes</option>
+            <option value="15">Up to 15 minutes</option>
+            <option value="20">Up to 20 minutes</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>What you need</legend>
+          <div class="chips" id="kitChips"></div>
+        </fieldset>
+        <div class="foot">
+          <label class="check"><input type="checkbox" id="bible"> Show Bible twists</label>
+          <button class="linkbtn" type="button" id="clear">Clear filters</button>
         </div>
-      </fieldset>
+      </div>
 
-      <fieldset>
-        <legend>Ages <span class="hint">(pick all that are there)</span></legend>
-        <div class="chips" id="ageChips"></div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Where?</legend>
-        <div class="chips" id="spaceChips"></div>
-      </fieldset>
-
-      <fieldset>
-        <legend>How lively?</legend>
-        <div class="chips" id="energyChips"></div>
-      </fieldset>
-
-      <fieldset>
-        <legend><label for="mins">How long?</label></legend>
-        <select id="mins">
-          <option value="0">Any length</option>
-          <option value="5">Up to 5 minutes</option>
-          <option value="10">Up to 10 minutes</option>
-          <option value="15">Up to 15 minutes</option>
-          <option value="20">Up to 20 minutes</option>
-        </select>
-      </fieldset>
-
-      <fieldset>
-        <legend>What you need</legend>
-        <div class="chips" id="kitChips"></div>
-      </fieldset>
-
-      <label class="check"><input type="checkbox" id="bible"> Show Bible twists</label>
-      <button class="linkbtn" type="button" id="clear">Clear filters</button>
-    </section>
-
-    <section aria-label="Games">
-      <div class="bar">
+      <div class="bar" id="results">
         <p class="count" id="count" aria-live="polite"></p>
         <div class="actions">
           <button class="btn primary" type="button" id="surprise">Pick one for me</button>
-          <button class="btn" type="button" id="plan">Plan an evening</button>
         </div>
       </div>
       <ul class="cards" id="cards"></ul>
-    </section>
-  </div>
+    </div>
+  </section>
 
-  <section id="mine" aria-labelledby="mineH">
-    <h2 id="mineH">My evening</h2>
-    <h2 class="print-title">Games for tonight</h2>
-    <p class="total" id="total">Nothing added yet. Press "Add to my evening" on a game, or "Plan an evening" for a suggested running order.</p>
-    <ol id="mineList"></ol>
-    <div class="actions">
-      <button class="btn" type="button" id="print" disabled>Print</button>
-      <button class="btn" type="button" id="clearList" disabled>Clear list</button>
+  <section class="block band" id="plan">
+    <div class="wrap">
+      <div class="head">
+        <h2>Can't decide? We'll plan the night.</h2>
+        <p>A warm-up, two main games and a calm one to finish, picked from whatever fits your filters above. Swap anything you don't fancy.</p>
+      </div>
+      <div class="cta">
+        <button class="btn solid-light" type="button" id="plan-btn">Plan an evening</button>
+        <a class="btn light" href="#find">Choose my own</a>
+      </div>
+
+      <div id="mine" aria-labelledby="mineH">
+        <h3 id="mineH">My evening</h3>
+        <h2 class="print-title">Games for tonight</h2>
+        <p class="total" id="total"></p>
+        <ol id="mineList"></ol>
+        <div class="actions">
+          <button class="btn" type="button" id="print" disabled>Print</button>
+          <button class="btn" type="button" id="clearList" disabled>Clear list</button>
+        </div>
+      </div>
     </div>
   </section>
 </main>
 
-<footer class="wrap">
-  <p>Games are the classic ones, written up short. Check the space for hazards and keep the rules kind: nobody should be left out for long.</p>
+<footer>
+  <div class="wrap">
+    <p>Classic games, written up short. Check the space for hazards and keep the rules kind, so nobody is left out for long.</p>
+    <p>What shall we play?</p>
+  </div>
 </footer>
 
 <dialog id="dlg" aria-labelledby="dlgTitle">
@@ -433,9 +544,36 @@ const GAMES = [
   blurb:"Copy your partner like a mirror.",
   how:"Face a partner. One leads slow movements and the other copies. Swap after a minute.",
   tip:"Slow works best. Try copying faces.",
-  twist:null}
+  twist:null},
+ {name:"Empires", ages:[10,99], players:[4,30], mins:25, energy:"calm", spaces:["living","hall"], kit:"Slips of paper, pens, a bowl or hat", role:"main",
+  blurb:"Everyone is secretly someone famous. Guess who, and they join your empire.",
+  how:"Everyone writes the name of a well-known person (real or made up) on a slip and drops it in the bowl. Each player draws one slip and keeps it secret. That is their identity. Go round the circle. On your turn, point at someone and guess who they are: 'Are you Mary Poppins?'. If you're right, they join your empire and you guess again. If you're wrong, the turn passes. The last empire standing wins.",
+  tip:"Ask everyone to pick names that most of the room will know, and to mix up the ages. Sit empires together as they grow.",
+  twist:"Only Bible people: Moses, Esther, Zacchaeus, Goliath, Mary Magdalene. Good for older kids."},
+ {name:"Mafia", ages:[10,99], players:[5,30], mins:20, energy:"calm", spaces:["living","hall"], kit:"Slips of paper or playing cards, plus a leader who doesn't play", role:"main",
+  blurb:"A village, a couple of secret wolves, and a vote every round.",
+  how:"The leader hands out secret roles: one or two mafia, and everyone else is a villager. Night: everyone closes their eyes and the mafia silently point at someone to knock out. Day: everyone wakes, the knocked-out player is out, and the village argues about who the mafia are, then votes one person out. Play until the mafia are all out, or there are as many mafia as villagers.",
+  tip:"One mafia for every five or six players. Put the patient grown-up in charge as leader. Players who are out can help the leader tell the story.",
+  twist:"Call them wolves among the sheep (Matthew 7:15). Afterwards talk about how you tell who to trust."},
+ {name:"Scattergories", ages:[8,99], players:[2,24], mins:20, energy:"calm", spaces:["living","hall"], kit:"Paper, pens, a timer", role:"main",
+  blurb:"Pick a letter. Find a word for every category before time runs out.",
+  how:"Write a list of categories on a sheet: a boy's name, an animal, a food, something in a kitchen. Pick a random letter. Everyone has two minutes to write one answer per category starting with that letter. Read the answers out. Any answer that someone else also wrote scores nothing. Every unique answer scores a point.",
+  tip:"Play in teams of two or three so younger and older players work together. Skip Q, X and Z.",
+  twist:"Use Bible categories: a book of the Bible, a disciple, a place Jesus visited, an animal on the ark."},
+ {name:"Ghost", ages:[8,99], players:[3,15], mins:10, energy:"calm", spaces:["living","hall","outside"], kit:null, role:"settle",
+  blurb:"Build a word one letter at a time, without being the one to finish it.",
+  how:"The first player says a letter. Each player in turn adds another letter, with a real word in mind. If you finish a word of four or more letters, you get a letter of G-H-O-S-T. If you think the last player is bluffing, challenge them and they must say their word. Spell GHOST and you're out.",
+  tip:"Agree the shortest word that counts before you start. A dictionary on a phone settles arguments.",
+  twist:"Only words from the Bible: Moses, Galilee, shepherd, manger."},
+ {name:"Wink murder", ages:[9,99], players:[6,20], mins:15, energy:"calm", spaces:["living","hall"], kit:"Slips of paper or playing cards", role:"settle",
+  blurb:"One secret winker. Spot them before they get you.",
+  how:"Hand out slips. One says 'winker', the rest are blank. Sit in a circle looking at each other. The winker winks at people, and when you get a wink you count to five and dramatically fall asleep. If you think you know who it is, say 'I accuse...'. A wrong guess and you're out.",
+  tip:"For a kids' club call it Wink tag, or Sleepy wink, and keep the drama silly. Needs a quiet room.",
+  twist:null},
 ];
 GAMES.forEach((g,i)=>g.id=i);
+const NGAMES = GAMES.length;
+document.getElementById("gameCount").textContent = NGAMES;
 
 /* ---------- Filter setup ---------- */
 const AGES = [
@@ -457,7 +595,6 @@ function saveList(){ try{ localStorage.setItem("gnp-list", JSON.stringify(list))
 
 const $ = s => document.querySelector(s);
 
-/* ---------- Chips ---------- */
 function chipGroup(el, items, multi, key){
   el.innerHTML = items.map(([v,l]) => `<button type="button" class="chip" data-v="${v}" aria-pressed="false">${l}</button>`).join("");
   el.addEventListener("click", e=>{
@@ -484,7 +621,7 @@ function sync(){
   $("#pNum").textContent = state.players;
   $("#mins").value = state.mins;
   $("#bible").checked = state.bible;
-  document.querySelectorAll(".modes button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.mode===state.mode));
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.mode===state.mode));
 }
 
 /* ---------- Matching ---------- */
@@ -508,25 +645,26 @@ function playersText(g){ return `${g.players[0]} to ${g.players[1]} players`; }
 
 function cardHTML(g){
   const on = list.includes(g.id);
-  return `<li class="card">
-    <h3>${g.name}</h3>
-    <p class="blurb">${g.blurb}</p>
-    <ul class="tags">
-      <li class="tag ${g.energy}">${LABEL[g.energy]}</li>
-      <li class="tag">${g.mins} min</li>
-      <li class="tag">${agesText(g)}</li>
-      <li class="tag">${playersText(g)}</li>
-    </ul>
-    <details>
-      <summary>How to play</summary>
-      <div class="body">
-        <h4>You need</h4><p>${g.kit || "Nothing"}</p>
-        <h4>How it works</h4><p>${g.how}</p>
-        <h4>${state.mode==="club" ? "Leader tip" : "Tip"}</h4><p>${g.tip}</p>
-        ${state.bible && g.twist ? `<div class="twist"><h4>Bible twist</h4><p>${g.twist}</p></div>` : ""}
-      </div>
-    </details>
-    <button type="button" class="btn add" data-id="${g.id}" aria-pressed="${on}">${on ? "In my evening" : "Add to my evening"}</button>
+  return `<li class="card ${g.energy}">
+    <div class="top"><span>${LABEL[g.energy]}</span><span>${g.mins} min</span></div>
+    <div class="inner">
+      <h3>${g.name}</h3>
+      <p class="blurb">${g.blurb}</p>
+      <ul class="tags">
+        <li class="tag">${agesText(g)}</li>
+        <li class="tag">${playersText(g)}</li>
+      </ul>
+      <details>
+        <summary>How to play</summary>
+        <div class="body">
+          <h4>You need</h4><p>${g.kit || "Nothing"}</p>
+          <h4>How it works</h4><p>${g.how}</p>
+          <h4>${state.mode==="club" ? "Leader tip" : "Tip"}</h4><p>${g.tip}</p>
+          ${state.bible && g.twist ? `<div class="twist"><h4>Bible twist</h4><p>${g.twist}</p></div>` : ""}
+        </div>
+      </details>
+      <button type="button" class="btn add" data-id="${g.id}" aria-pressed="${on}">${on ? "In my evening" : "Add to my evening"}</button>
+    </div>
   </li>`;
 }
 
@@ -534,9 +672,10 @@ function render(){
   const r = results();
   $("#count").textContent = r.length===1 ? "1 game fits" : `${r.length} games fit`;
   $("#surprise").disabled = r.length===0;
+  $("#heroPick").disabled = r.length===0;
   $("#cards").innerHTML = r.length ? r.map(cardHTML).join("") :
     `<li class="empty" style="grid-column:1/-1"><p><b>Nothing fits all of that.</b></p><p>Try fewer ages, a longer time, or a different space.</p><button class="btn" type="button" id="emptyClear">Clear filters</button></li>`;
-  const ec = $("#emptyClear"); if(ec) ec.onclick = clearFilters;
+  const ec = $("#emptyClear"); if(ec) ec.onclick = ()=>clearFilters();
   renderList();
 }
 
@@ -550,7 +689,7 @@ function renderList(){
   const total = list.reduce((s,id)=>s+GAMES[id].mins,0);
   $("#total").textContent = list.length
     ? `${list.length} ${list.length===1?"game":"games"}, about ${total} minutes.`
-    : `Nothing added yet. Press "Add to my evening" on a game, or "Plan an evening" for a suggested running order.`;
+    : `Nothing added yet. Add games from the list above, or press "Plan an evening".`;
   $("#print").disabled = $("#clearList").disabled = list.length===0;
 }
 
@@ -567,7 +706,6 @@ $("#mineList").addEventListener("click", e=>{
 });
 $("#clearList").onclick = ()=>{ list = []; saveList(); render(); };
 $("#print").onclick = ()=>window.print();
-$("#jump").onclick = ()=>$("#mine").scrollIntoView({behavior:"smooth"});
 
 $("#pMinus").onclick = ()=>{ state.players = Math.max(2, state.players-1); sync(); render(); };
 $("#pPlus").onclick  = ()=>{ state.players = Math.min(60, state.players+1); sync(); render(); };
@@ -581,30 +719,42 @@ function clearFilters(){
 }
 $("#clear").onclick = clearFilters;
 
-document.querySelectorAll(".modes button").forEach(b=>b.onclick = ()=>{
+document.querySelectorAll(".seg button").forEach(b=>b.onclick = ()=>{
   state.mode = b.dataset.mode;
   state.players = state.mode==="club" ? 15 : 5;
   state.bible = state.mode==="club";
   sync(); render();
 });
 
+/* Browse by mood */
+document.querySelectorAll(".mood").forEach(b=>b.onclick = ()=>{
+  clearFilters();
+  const p = b.dataset.preset;
+  if(p==="table"){ state.energy.add("calm"); }
+  if(p==="move"){ state.energy.add("lively"); state.energy.add("wild"); }
+  if(p==="little"){ state.ages.add("a1"); }
+  if(p==="big"){ state.players = 25; }
+  sync(); render();
+  $("#results").scrollIntoView({behavior:"smooth"});
+});
+
 /* Evening plan: a warm-up, two main games, one to settle */
 const rnd = a => a[Math.floor(Math.random()*a.length)];
-$("#plan").onclick = ()=>{
+$("#plan-btn").onclick = ()=>{
   if(list.length && !confirm("Replace your current list with a new suggestion?")) return;
   const pool = results();
-  if(!pool.length){ $("#cards").scrollIntoView(); return; }
+  if(!pool.length){ $("#results").scrollIntoView(); return; }
   const used = new Set(), out = [];
   const take = (arr) => { const c = arr.filter(g=>!used.has(g.id)); if(!c.length) return; const g = rnd(c); used.add(g.id); out.push(g.id); };
   take(pool.filter(g=>g.role==="warm"));
   const mains = pool.filter(g=>g.role==="main");
   take(mains.filter(g=>g.energy==="lively"));
-  take(mains.filter(g=>g.energy!=="calm" && !used.has(g.id)).length ? mains.filter(g=>g.energy==="wild") : mains);
+  take(mains.filter(g=>g.energy==="wild").length ? mains.filter(g=>g.energy==="wild") : mains);
   take(mains);
   take(pool.filter(g=>g.role==="settle"));
   while(out.length < 4 && out.length < pool.length) take(pool);
   list = out; saveList(); render();
-  $("#mine").scrollIntoView({behavior:"smooth"});
+  $("#mine").scrollIntoView({behavior:"smooth", block:"center"});
 };
 
 /* Pick one for me */
@@ -612,7 +762,7 @@ const dlg = $("#dlg");
 let lastPick = -1;
 function showPick(){
   const r = results(); if(!r.length) return;
-  let g = rnd(r.length>1 ? r.filter(x=>x.id!==lastPick) : r);
+  const g = rnd(r.length>1 ? r.filter(x=>x.id!==lastPick) : r);
   lastPick = g.id;
   const on = list.includes(g.id);
   $("#pickBody").innerHTML = `
@@ -620,10 +770,10 @@ function showPick(){
     <h3 id="dlgTitle">${g.name}</h3>
     <p class="blurb">${g.blurb}</p>
     <ul class="tags" style="margin:12px 0">
-      <li class="tag ${g.energy}">${LABEL[g.energy]}</li><li class="tag">${g.mins} min</li><li class="tag">${agesText(g)}</li>
+      <li class="tag">${LABEL[g.energy]}</li><li class="tag">${g.mins} min</li><li class="tag">${agesText(g)}</li><li class="tag">${playersText(g)}</li>
     </ul>
-    <h4 style="margin:12px 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)">You need</h4><p style="margin:0">${g.kit || "Nothing"}</p>
-    <h4 style="margin:12px 0 2px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)">How it works</h4><p style="margin:0">${g.how}</p>
+    <h4>You need</h4><p>${g.kit || "Nothing"}</p>
+    <h4>How it works</h4><p>${g.how}</p>
     ${state.bible && g.twist ? `<div class="twist"><h4>Bible twist</h4><p>${g.twist}</p></div>` : ""}
     <div class="row">
       <button class="btn primary" type="button" id="again">Another one</button>
@@ -631,15 +781,12 @@ function showPick(){
       <button class="btn" type="button" id="closePick">Close</button>
     </div>`;
   $("#again").onclick = showPick;
-  $("#addPick").onclick = ()=>{ toggle(g.id); showPick_same(g); };
+  $("#addPick").onclick = ()=>{ toggle(g.id); const n = list.includes(g.id); $("#addPick").textContent = n ? "In my evening" : "Add to my evening"; $("#addPick").setAttribute("aria-pressed", n); };
   $("#closePick").onclick = ()=>dlg.close();
 }
-function showPick_same(g){
-  const on = list.includes(g.id);
-  $("#addPick").textContent = on ? "In my evening" : "Add to my evening";
-  $("#addPick").setAttribute("aria-pressed", on);
-}
-$("#surprise").onclick = ()=>{ showPick(); dlg.showModal(); };
+function openPick(){ showPick(); if(!dlg.open) dlg.showModal(); }
+$("#surprise").onclick = openPick;
+$("#heroPick").onclick = openPick;
 dlg.addEventListener("click", e=>{ if(e.target===dlg) dlg.close(); });
 
 sync(); render();
